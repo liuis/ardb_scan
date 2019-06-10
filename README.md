@@ -310,17 +310,17 @@ rocksdb's options:
 
 
 
-![image-20190606213114339](/Users/liping/Library/Application Support/typora-user-images/image-20190606213114339.png)
+![image-20190606213114339](./img/image-20190606213114339.png)
 
-![image-20190607173707080](/Users/liping/Library/Application Support/typora-user-images/image-20190607173707080.png)
+![image-20190607173707080](./img/image-20190607173707080.png)
 
-![image-20190607174604366](/Users/liping/Library/Application Support/typora-user-images/image-20190607174604366.png)
+![image-20190607174604366](./img/image-20190607174604366.png)
 
 ### 3.压测结果
 
-![image-20190607212754752](/Users/liping/Library/Application Support/typora-user-images/image-20190607212754752.png)
+![image-20190607212754752](./img/image-20190607212754752.png)
 
-![image-20190607233947122](/Users/liping/Library/Application Support/typora-user-images/image-20190607233947122.png)
+![image-20190607233947122](./img/image-20190607233947122.png)
 
 |                                    | ardb(1 thread) | ardb(4 thread) | ardb(16 thread) | redis    |
 | ---------------------------------- | -------------- | -------------- | --------------- | -------- |

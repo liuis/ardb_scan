@@ -547,7 +547,7 @@ min_write_buffer_number_to_merge=6
 
 #### 1.针对IO过高，我们采用管道来应对，来提高效率，节省IO的时间。
 
-2.需要一个长时间的压测
+#### 2.需要一个长时间的压测
 
 ## ISSUE
 
@@ -560,6 +560,77 @@ min_write_buffer_number_to_merge=6
 #### New ISSUE 
 
   1.压测LPUSH， ZADD   64 byte playload
+
+
+
+   ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 1000000 -n 1000000 -d 64
+====== LPUSH ======
+  1000000 requests completed in 52.95 seconds
+  50 parallel clients
+  64 bytes payload
+  keep alive: 1
+
+0.38% <= 1 milliseconds
+
+20.47% <= 2 milliseconds
+
+75.72% <= 3 milliseconds
+
+94.58% <= 4 milliseconds
+
+98.73% <= 5 milliseconds
+
+99.52% <= 6 milliseconds
+
+99.73% <= 7 milliseconds
+
+99.82% <= 8 milliseconds
+
+99.87% <= 9 milliseconds
+
+99.90% <= 10 milliseconds
+
+99.92% <= 11 milliseconds
+
+99.95% <= 12 milliseconds
+
+99.96% <= 13 milliseconds
+
+99.97% <= 14 milliseconds
+
+99.97% <= 15 milliseconds
+
+99.98% <= 16 milliseconds
+
+99.98% <= 17 milliseconds
+
+99.98% <= 18 milliseconds
+
+99.98% <= 19 milliseconds
+
+99.98% <= 20 milliseconds
+
+99.99% <= 21 milliseconds
+
+99.99% <= 22 milliseconds
+
+99.99% <= 23 milliseconds
+
+100.00% <= 24 milliseconds
+
+100.00% <= 25 milliseconds
+
+100.00% <= 27 milliseconds
+
+100.00% <= 28 milliseconds
+
+100.00% <= 29 milliseconds
+
+100.00% <= 31 milliseconds
+
+100.00% <= 31 milliseconds
+
+18885.38 requests per second
 
 ## Reference
 

@@ -547,7 +547,7 @@ min_write_buffer_number_to_merge=6
 
 #### 1.针对IO过高，我们采用管道来应对，来提高效率，节省IO的时间。
 
-​    增加
+2.需要一个长时间的压测
 
 ## ISSUE
 

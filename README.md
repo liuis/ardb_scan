@@ -343,7 +343,7 @@ rocksdb's options:
 | LRANGE_600 (first 600 elements)    | 903.51         | 1314.46        | 1286.49         | 10954.94 |
 | MSET (10 keys)                     | 17732.38       | 19084.33       | 18802.65        | 74996.25 |
 
-
+-------------------------------------------------------------------------------
 
 write_buffer_size = 2048M 
 
@@ -356,23 +356,44 @@ min_write_buffer_number_to_merge=3
 
 
 "PING_INLINE","47089.85"
+
 "PING_BULK","46783.62"
+
 "SET","36331.93"
+
 "GET","47312.64"
+
 "INCR","48222.98"
+
 "LPUSH","17512.52"
+
 "RPUSH","17666.28"
+
 "LPOP","11047.53"
+
 "RPOP","10618.98"
+
 "SADD","18976.05"
+
 "HSET","26562.54"
+
 "SPOP","13604.33"
+
 "LPUSH (needed to benchmark LRANGE)","19145.35"
+
 "LRANGE_100 (first 100 elements)","12585.90"
+
 "LRANGE_300 (first 300 elements)","4908.89"
+
 "LRANGE_500 (first 450 elements)","3388.89"
+
 "LRANGE_600 (first 600 elements)","2575.57"
+
 "MSET (10 keys)","20855.06"
+
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
 
 
 
@@ -385,27 +406,46 @@ min_write_buffer_number_to_merge=3
 
 
 "PING_INLINE","47238.89"
+
 "PING_BULK","47096.50"
+
 "SET","36508.34"
+
 "GET","47569.21"
+
 "INCR","47885.84"
+
 "LPUSH","17933.68"
+
 "RPUSH","17717.93"
+
 "LPOP","10217.95"
+
 "RPOP","10638.52"
+
 "SADD","19117.54"
+
 "HSET","26020.66"
+
 "SPOP","12038.76"
+
 "LPUSH (needed to benchmark LRANGE)","19061.05"
+
 "LRANGE_100 (first 100 elements)","12025.30"
+
 "LRANGE_300 (first 300 elements)","4830.45"
+
 "LRANGE_500 (first 450 elements)","3319.39"
+
 "LRANGE_600 (first 600 elements)","2545.84"
+
 "MSET (10 keys)","20663.72"
 
 
 
+------
 
+------
 
 write_buffer_size = 2048M 
 
@@ -415,51 +455,88 @@ min_write_buffer_number_to_merge=6
 
 ./redis-benchmark -h 127.0.0.1 -p 16379 -c 50 -r 1000000 -n 1000000 zadd ss 0 ele:rand:000000000000  --csv
 ====== zadd ss 0 ele:rand:000000000000 --csv ======
+
   1000000 requests completed in 21.12 seconds
   50 parallel clients
+
   3 bytes payload
+
   keep alive: 1
 
-99.55% <= 1 milliseconds
+99.55% <= 1 milliseconds 
+
 99.94% <= 2 milliseconds
+
 99.96% <= 3 milliseconds
+
 99.97% <= 4 milliseconds
+
 99.98% <= 5 milliseconds
+
 99.98% <= 6 milliseconds
+
 99.99% <= 7 milliseconds
+
 99.99% <= 8 milliseconds
+
 99.99% <= 9 milliseconds
+
 100.00% <= 9 milliseconds
+
 47355.21 requests per second
 
 
 
 ./redis-benchmark -h 127.0.0.1 -p 16379 -c 50 -r 1000000 -n 1000000 ==-P 32==  zadd ss 0 ele:rand:000000000000  --csv
+
 ====== zadd ss 0 ele:rand:000000000000 --csv ======
-  1000000 requests completed in 0.97 seconds
+
+1000000 requests completed in 0.97 seconds
+
   50 parallel clients
+
   3 bytes payload
+
   keep alive: 1
 
 45.35% <= 1 milliseconds
+
 89.94% <= 2 milliseconds
+
 95.78% <= 3 milliseconds
+
 97.64% <= 4 milliseconds
+
 98.40% <= 5 milliseconds
+
 98.68% <= 6 milliseconds
+
 99.04% <= 7 milliseconds
+
 99.30% <= 8 milliseconds
+
 99.51% <= 9 milliseconds
+
 99.75% <= 10 milliseconds
+
 99.80% <= 11 milliseconds
+
 99.84% <= 12 milliseconds
+
 99.88% <= 13 milliseconds
+
 99.91% <= 14 milliseconds
+
 99.93% <= 15 milliseconds
+
 99.94% <= 16 milliseconds
+
 99.96% <= 20 milliseconds
+
 99.99% <= 21 milliseconds
+
 100.00% <= 21 milliseconds
+
 1030927.81 requests per second
 
 

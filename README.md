@@ -549,7 +549,7 @@ min_write_buffer_number_to_merge=6
 
 ​    增加
 
-### 4.ISSUE
+## ISSUE
 
 1. 多线程几乎没意义，写的时候多线程没有提高效率
 2. value需要改成64 hash
@@ -557,7 +557,7 @@ min_write_buffer_number_to_merge=6
 4. HMSET没有，要想办法搞上去，我们每个tx都要用hmset存下每一个field
 5.  LLEN ZCARD等询问长度的我觉得应该效率还好，出于保险起见最好也看一下
 
-#### 5.New ISSUE 
+#### New ISSUE 
 
   1.压测LPUSH， ZADD   64 byte playload
 

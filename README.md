@@ -1,10 +1,14 @@
-| author                    | time     | version |                                     |
-| ------------------------- | -------- | ------- | ----------------------------------- |
-| ping.li@conflux-chain.org | 2019.6.5 | v0.0.1  | 先对RocksDB的原理和基础功能进行理解 |
-| ping.li@conflux-chain.org | 2019.6.5 | v0.0.2  | 增加对测试环境的配置说明            |
-| ping.li@conflux-chain.org | 2019.6.6 | v.0.0.3 | 增加ardb ( redis aof to rocksdb )   |
-| ping.li@conflux-chain.org | 2019.6.7 | v.0.0.4 | 增加Benchmark 压测记录              |
-| ping.li@conflux-chain.org | 2019.6.7 | v 0.0.5 | 增加Benchmark redis压测记录         |
+| author                    | time      | version |                                     |
+| ------------------------- | --------- | ------- | ----------------------------------- |
+| ping.li@conflux-chain.org | 2019.6.5  | v0.0.1  | 先对RocksDB的原理和基础功能进行理解 |
+| ping.li@conflux-chain.org | 2019.6.5  | v0.0.2  | 增加对测试环境的配置说明            |
+| ping.li@conflux-chain.org | 2019.6.6  | v.0.0.3 | 增加ardb ( redis aof to rocksdb )   |
+| ping.li@conflux-chain.org | 2019.6.7  | v.0.0.4 | 增加Benchmark 压测记录              |
+| ping.li@conflux-chain.org | 2019.6.7  | v 0.0.5 | 增加Benchmark redis压测记录         |
+| ping.li@conflux-chain.org | 2019.6.11 | v 0.06  | 调优&&5亿value 压测 64bytes         |
+| ping.li@conflux-chain.org | 2019.6.12 | v 0.07  | 增加分段压测记录                    |
+
+
 
 
 
@@ -650,13 +654,199 @@ min_write_buffer_number_to_merge=6
 
 7.压测：
 
-1. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100 -n 500000000 -d 64
-2. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 1000 -n 500000000 -d 64
-3. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 10000 -n 500000000 -d 64
-4. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100000 -n 500000000 -d 64
-5. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 1000000 -n 500000000 -d 64
-6. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 10000000 -n 500000000 -d 64
-7. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100000000 -n 500000000 -d 64
+1. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100 -n 10000000 -d 64
+
+   ====== LPUSH ======
+     10000000 requests completed in 448.55 seconds
+     50 parallel clients
+     64 bytes payload
+   22294.21 requests per second
+
+   
+
+2. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 1000 -n 10000000 -d 64
+
+   10000000 requests completed in 457.35 seconds
+     50 parallel clients
+     64 bytes payload
+   21865.19 requests per second
+
+3. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 10000 -n 10000000 -d 64
+
+   10000000 requests completed in 456.99 seconds
+     50 parallel clients
+     64 bytes payload
+   21882.32 requests per second
+
+4. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100000 -n 10000000 -d 64
+
+   10000000 requests completed in 455.67 seconds
+     50 parallel clients
+     64 bytes payload
+   21945.80 requests per second
+
+5. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 1000000 -n 10000000 -d 64
+
+   10000000 requests completed in 453.64 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   22044.11 requests per second
+
+6. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 10000000 -n 10000000 -d 64
+
+   10000000 requests completed in 465.22 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   21495.12 requests per second
+
+7. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100000000 -n 10000000 -d 64
+
+10000000 requests completed in 461.07 seconds
+  50 parallel clients
+  64 bytes payload
+  keep alive: 1
+
+21688.73 requests per second
+
+
+
+1. ./redis-benchmark -h 127.0.0.1 -p 16379  -r 100 -n 10000000 -P 32 -d 64 hmset  myhash rand_int rand_int rand_int rand_int
+   ====== hmset myhash rand_int rand_int rand_int rand_int ======
+     10000000 requests completed in 478.27 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   20908.78 requests per second
+
+2. ./redis-benchmark -h 127.0.0.1 -p 16379  -r 1000 -n 10000000 -P 32 -d 64 hmset  myhash rand_int rand_int rand_int rand_int
+   ====== hmset myhash rand_int rand_int rand_int rand_int ======
+     10000000 requests completed in 489.17 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   20442.58 requests per second
+
+3. ./redis-benchmark -h 127.0.0.1 -p 16379  -r 10000 -n 10000000 -P 32 -d 64 hmset  myhash rand_int rand_int rand_int rand_int
+   ====== hmset myhash rand_int rand_int rand_int rand_int ======
+     10000000 requests completed in 483.89 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   20665.77 requests per second
+
+4. ./redis-benchmark -h 127.0.0.1 -p 16379  -r 100000 -n 10000000 -P 32 -d 64 hmset  myhash rand_int rand_int rand_int rand_int
+   ====== hmset myhash rand_int rand_int rand_int rand_int ======
+     10000000 requests completed in 481.34 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   20775.16 requests per second
+
+   
+
+5. ./redis-benchmark -h 127.0.0.1 -p 16379 -t hmset  -r 1000000 -n 10000000 -d 64
+
+   ./redis-benchmark -h 127.0.0.1 -p 16379  -r 1000000 -n 10000000 -P 32 -d 64 hmset  myhash rand_int rand_int rand_int rand_int
+   ====== hmset myhash rand_int rand_int rand_int rand_int ======
+     10000000 requests completed in 467.57 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   21387.40 requests per second
+
+6. ./redis-benchmark -h 127.0.0.1 -p 16379  -r 10000000 -n 10000000 -P 32 -d 64 hmset  myhash rand_int rand_int rand_int rand_int
+   ====== hmset myhash rand_int rand_int rand_int rand_int ======
+     10000000 requests completed in 476.03 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   21007.12 requests per second
+
+7. ./redis-benchmark -h 127.0.0.1 -p 16379 -t hmset  -r 100000000 -n 10000000 -d 64
+
+   ./redis-benchmark -h 127.0.0.1 -p 16379  -r 100000000 -n 10000000 -P 32 -d 64 hmset  myhash rand_int rand_int rand_int rand_int
+   ====== hmset myhash rand_int rand_int rand_int rand_int ======
+     10000000 requests completed in 454.09 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   22022.07 requests per second
+
+   
+
+1. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+   ====== zadd myzset rand_int member:rand_int ======
+     10000000 requests completed in 207.88 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   48105.14 requests per second
+
+2. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 1000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+   ====== zadd myzset rand_int member:rand_int ======
+     10000000 requests completed in 209.57 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   47716.53 requests per second
+
+3. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 10000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+   ====== zadd myzset rand_int member:rand_int ======
+     10000000 requests completed in 211.10 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   47371.81 requests per second
+
+4. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+   ====== zadd myzset rand_int member:rand_int ======
+     10000000 requests completed in 212.55 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   47048.20 requests per second
+
+5. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 1000000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+   ====== zadd myzset rand_int member:rand_int ======
+     10000000 requests completed in 210.55 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   47493.75 requests per second
+
+6. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 10000000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+   ====== zadd myzset rand_int member:rand_int ======
+     10000000 requests completed in 208.72 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   47912.00 requests per second
+
+7. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100000000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+   ====== zadd myzset rand_int member:rand_int ======
+     10000000 requests completed in 209.92 seconds
+     50 parallel clients
+     64 bytes payload
+     keep alive: 1
+
+   47637.65 requests per second
 
 ## Reference
 

@@ -632,6 +632,32 @@ min_write_buffer_number_to_merge=6
 
 18885.38 requests per second
 
+
+
+#### ISSUE Test
+
+1.conflux full node 启动： ./target/release/conflux --jsonrpc-http-port=12345 --load-test-chain=test/blockchain_tests/general_2.json --test-mode true --jsonrpc-cors all
+
+2.ardb 的启动： src 目录下的 ardb-server
+
+3.conflux_scan_api :  改动db 目录下的createrclient 的端口为ardb的端口 ：16973
+
+4.如果想查看ardb中写入的数据，可以启动reidis-cli  -port 16973 来查看。
+
+5.构造压测branch   ———>ardb branch
+
+6.修改服务器的内核参数来放大多个文件描述符，core 等，ulimit -a 现实各个为 ulimited 
+
+7.压测：
+
+1. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100 -n 500000000 -d 64
+2. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 1000 -n 500000000 -d 64
+3. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 10000 -n 500000000 -d 64
+4. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100000 -n 500000000 -d 64
+5. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 1000000 -n 500000000 -d 64
+6. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 10000000 -n 500000000 -d 64
+7. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100000000 -n 500000000 -d 64
+
 ## Reference
 
 [1]LevelDB 实现分析： <http://taobaofed.org/blog/2017/07/05/leveldb-analysis/>

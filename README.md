@@ -654,6 +654,8 @@ min_write_buffer_number_to_merge=6
 
 7.压测：
 
+#### LPUSH 
+
 1. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100 -n 10000000 -d 64
 
    ====== LPUSH ======
@@ -712,7 +714,7 @@ min_write_buffer_number_to_merge=6
 
 21688.73 requests per second
 
-
+#### HMSET
 
 1. ./redis-benchmark -h 127.0.0.1 -p 16379  -r 100 -n 10000000 -P 32 -d 64 hmset  myhash rand_int rand_int rand_int rand_int
    ====== hmset myhash rand_int rand_int rand_int rand_int ======
@@ -783,9 +785,9 @@ min_write_buffer_number_to_merge=6
 
    22022.07 requests per second
 
-   
+   #### ZADD
 
-1. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+1. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100 -n 10000000 -d 64 zadd myzset rand_int member:rand_int 
    ====== zadd myzset rand_int member:rand_int ======
      10000000 requests completed in 207.88 seconds
      50 parallel clients

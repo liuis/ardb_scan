@@ -656,6 +656,8 @@ min_write_buffer_number_to_merge=6
 
 #### LPUSH 
 
+![](./ardb/img/LPUSH.png)
+
 1. ./redis-benchmark -h 127.0.0.1 -p 16379 -t lpush  -r 100 -n 10000000 -d 64
 
    ====== LPUSH ======
@@ -715,6 +717,8 @@ min_write_buffer_number_to_merge=6
 21688.73 requests per second
 
 #### HMSET
+
+![](./ardb/img/HMSET.png)
 
 1. ./redis-benchmark -h 127.0.0.1 -p 16379  -r 100 -n 10000000 -P 32 -d 64 hmset  myhash rand_int rand_int rand_int rand_int
    ====== hmset myhash rand_int rand_int rand_int rand_int ======
@@ -787,66 +791,68 @@ min_write_buffer_number_to_merge=6
 
    #### ZADD
 
-1. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100 -n 10000000 -d 64 zadd myzset rand_int member:rand_int 
-   ====== zadd myzset rand_int member:rand_int ======
-     10000000 requests completed in 207.88 seconds
-     50 parallel clients
-     64 bytes payload
-     keep alive: 1
+   ![](./ardb/img/ZADD.png)
+
+   1. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100 -n 10000000 -d 64 zadd myzset rand_int member:rand_int 
+      ====== zadd myzset rand_int member:rand_int ======
+        10000000 requests completed in 207.88 seconds
+        50 parallel clients
+        64 bytes payload
+        keep alive: 1
 
    48105.14 requests per second
 
-2. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 1000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
-   ====== zadd myzset rand_int member:rand_int ======
-     10000000 requests completed in 209.57 seconds
-     50 parallel clients
-     64 bytes payload
-     keep alive: 1
+   2. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 1000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+      ====== zadd myzset rand_int member:rand_int ======
+        10000000 requests completed in 209.57 seconds
+        50 parallel clients
+        64 bytes payload
+        keep alive: 1
 
    47716.53 requests per second
 
-3. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 10000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
-   ====== zadd myzset rand_int member:rand_int ======
-     10000000 requests completed in 211.10 seconds
-     50 parallel clients
-     64 bytes payload
-     keep alive: 1
+   3. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 10000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+      ====== zadd myzset rand_int member:rand_int ======
+        10000000 requests completed in 211.10 seconds
+        50 parallel clients
+        64 bytes payload
+        keep alive: 1
 
    47371.81 requests per second
 
-4. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
-   ====== zadd myzset rand_int member:rand_int ======
-     10000000 requests completed in 212.55 seconds
-     50 parallel clients
-     64 bytes payload
-     keep alive: 1
+   4. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+      ====== zadd myzset rand_int member:rand_int ======
+        10000000 requests completed in 212.55 seconds
+        50 parallel clients
+        64 bytes payload
+        keep alive: 1
 
    47048.20 requests per second
 
-5. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 1000000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
-   ====== zadd myzset rand_int member:rand_int ======
-     10000000 requests completed in 210.55 seconds
-     50 parallel clients
-     64 bytes payload
-     keep alive: 1
+   5. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 1000000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+      ====== zadd myzset rand_int member:rand_int ======
+        10000000 requests completed in 210.55 seconds
+        50 parallel clients
+        64 bytes payload
+        keep alive: 1
 
    47493.75 requests per second
 
-6. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 10000000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
-   ====== zadd myzset rand_int member:rand_int ======
-     10000000 requests completed in 208.72 seconds
-     50 parallel clients
-     64 bytes payload
-     keep alive: 1
+   6. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 10000000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+      ====== zadd myzset rand_int member:rand_int ======
+        10000000 requests completed in 208.72 seconds
+        50 parallel clients
+        64 bytes payload
+        keep alive: 1
 
    47912.00 requests per second
 
-7. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100000000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
-   ====== zadd myzset rand_int member:rand_int ======
-     10000000 requests completed in 209.92 seconds
-     50 parallel clients
-     64 bytes payload
-     keep alive: 1
+   7. ./redis-benchmark -h 127.0.0.1 -p 16379   -r 100000000 -n 10000000 -d 64 zadd myzset rand_int member:rand_int
+      ====== zadd myzset rand_int member:rand_int ======
+        10000000 requests completed in 209.92 seconds
+        50 parallel clients
+        64 bytes payload
+        keep alive: 1
 
    47637.65 requests per second
 

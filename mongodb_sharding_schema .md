@@ -1,3 +1,7 @@
+| author                                                       | time      | version |                        |
+| ------------------------------------------------------------ | --------- | ------- | ---------------------- |
+| [ping.li@conflux-chain.org](mailto:ping.li@conflux-chain.org) | 2019.6.14 | v0.0.1  | mongodb sharing schema |
+
 # MongoDB sharding schema desigin 
 
 [TOC]

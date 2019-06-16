@@ -302,3 +302,32 @@ type: Integer
 
 ## 贰.mongodb sharding 
 
+![](<https://www.ibm.com/developerworks/cn/opensource/os-cn-apache-cassandra3x3/image003.png>)
+
+mongodb ->MongoDB作为非关系型*数据库*，其主要的优势在于schema-less
+
+如果要设计sharding的话：
+
+好的 shard key 应该拥有如下特性：
+
+- key 分布足够离散 （sufficient cardinality）
+- 写请求均匀分布 （evenly distributed write）
+- 尽量避免 scatter-gather 查询 （targeted read）
+
+
+
+我们主要的目的就是在写操作可扩展，分散写的操作，尽可能的将写操作分散到多个Chunk中。
+
+我们的数据格式为epoch->block->TXs   而且是随着timestamp 来增长的，流数据，
+
+
+
+很多分布算法都是如下：
+
+```
+shard = hash(routing) % number_of_primary_shards
+```
+
+
+
+Elasticsearch,Cassandra 优先考虑

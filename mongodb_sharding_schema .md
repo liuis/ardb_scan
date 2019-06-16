@@ -330,4 +330,6 @@ shard = hash(routing) % number_of_primary_shards
 
 
 
-Elasticsearch,Cassandra 优先考虑
+Elasticsearch ，可以提供给外部Elasticsearch 的REST API 给社区，第三方也可以开放他们的web端，PC端，移动端
+
+Cassandra 优先考虑

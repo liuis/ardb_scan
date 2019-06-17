@@ -322,7 +322,7 @@ mongodb ->MongoDB作为非关系型*数据库*，其主要的优势在于schema-
 
 
 
-很多分布算法都是如下：
+很多sharding算法都是如下：
 
 ```
 shard = hash(routing) % number_of_primary_shards
@@ -330,6 +330,6 @@ shard = hash(routing) % number_of_primary_shards
 
 
 
-Elasticsearch ，可以提供给外部Elasticsearch 的REST API 给社区，第三方也可以开放他们的web端，PC端，移动端
+~~Elasticsearch ，可以提供给外部Elasticsearch 的REST API 给社区，第三方也可以开放他们的web端，PC端，移动端~~
 
 Cassandra 优先考虑

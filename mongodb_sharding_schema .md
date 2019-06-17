@@ -314,13 +314,9 @@ mongodb ->MongoDB作为非关系型*数据库*，其主要的优势在于schema-
 - 写请求均匀分布 （evenly distributed write）
 - 尽量避免 scatter-gather 查询 （targeted read）
 
-
-
 我们主要的目的就是在写操作可扩展，分散写的操作，尽可能的将写操作分散到多个Chunk中。
 
 我们的数据格式为epoch->block->TXs   而且是随着timestamp 来增长的，流数据，
-
-
 
 很多sharding算法都是如下：
 
@@ -328,8 +324,41 @@ mongodb ->MongoDB作为非关系型*数据库*，其主要的优势在于schema-
 shard = hash(routing) % number_of_primary_shards
 ```
 
-
-
 ~~Elasticsearch ，可以提供给外部Elasticsearch 的REST API 给社区，第三方也可以开放他们的web端，PC端，移动端~~
 
 Cassandra 优先考虑
+
+redis , mongodb， cassandra 都采用 一致性hash算法，我们的sharding 也可以采用一致性hash
+
+![](https://user-gold-cdn.xitu.io/2018/4/26/162ffff01dab936a?imageslim)
+
+#### 1.需要拆分的collections，
+
+### 一.Block   ->HMSET ：key :"blocks:${blockHash}"
+
+#### 1.Block Detail, for block hash query:    
+
+​	key: "blocks:\${blockHash}"
+​	type: Hashes
+   ==sharding key："blocks:\${blockHash}"== 
+
+### 二.Transaction  -> HMSET ：key :"transactions:${txHash}"
+
+#### 1.TrasnactionDetail, for transaction hash query:
+
+ 	key: "transactions:${txHash}"
+ 	type: Hashes
+ 	 ==sharding key："transactions:\${txHash}"== 
+
+
+
+### 三.Block Transactions -> ZADD  key: "blocks:\${blockHash}:transactions"  score: transaction index
+
+#### 1.Block Transactions for block transaction query:
+
+​	key: "blocks:\${blockHash}:transactions"
+​	type: Sorted set
+​	score: transaction index
+​	format: "\${transactionHash}"
+
+​    ==sharding key："transactions:\${txHash}"==

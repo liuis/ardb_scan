@@ -17,7 +17,7 @@
 7. 最新区块难度总值
 8. 最新的区块链的交易总数，TPS
 9. Privot Chain
-10. Epoch info
+10. Ep och info
 
 ## 壹.Redis 的schema 
 
@@ -333,7 +333,7 @@ redis , mongodb， cassandra 都采用 一致性hash算法，我们的sharding �
 1. hash(服务器的IP地址) % 2^32  多个服务器需要多次hash形成分布node,同时为了均衡开启vnode 
 2.  hash(服务器的IP地址#1) % 2^32 
 3.  hash(服务器的IP地址#2…N) % 2^32 
-4.  hash （不同的key  根据sharding key ）%2^32, 分布到不同的node 有可能是vnode 节点，vnode节点分布在不同的实体物理机，做备份。
+4.  hash （不同的key  根据sharding key ）%2^32, 分布到不同的node 有可能是vnode 节点，vnode节点分布在不同的实体物理机，做backup。
 
 ![](https://user-gold-cdn.xitu.io/2018/4/26/162ffff01dab936a?imageslim)
 
@@ -367,3 +367,27 @@ redis , mongodb， cassandra 都采用 一致性hash算法，我们的sharding �
 ​	format: "\${transactionHash}"
 
 ​    ==sharding key："transactions:\${txHash}"==
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+statistics

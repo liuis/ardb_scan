@@ -49,15 +49,45 @@
 
 ## 三. Sharding Key 
 
-  1.epoch -> blocks  ${'epoch':${epochNo.}} =>  values <=>  blocks
+ ![](./img/sharding1.jpeg)
 
-​	主要写入epoch的bocks
 
-  2.privotchain ->blocks  ${PrivotChainHash}  => values<=> blocks
 
-​    主要写入privotChain 的blocks
+![](./img/sharding2.jpeg)
 
-3. transactions -> ${"epoch": ${epchNo}:"blockhash":${blockhash}:"tx"} => values <=> Txs
 
-​    主要写入Txs
 
+1.block detail
+
+2.total ordered block
+
+3.pivot chain
+
+4.block epoch
+
+5.block by miner
+
+==6.latest block==
+
+---------------------------------------------------------
+
+上述1-6的功能因为是0.25s/block  所以可以不用作sharding
+
+下述7-10的功能因为每秒3000TPS的写入量要做sharding
+
+------------------------------------------
+
+7.tx detail  —> sharding key   Tx hash
+
+8.tx  by  account —> sharding key  account_address
+
+9.total ordered Tx ———>   
+
++ 直接放到内存里  
+
++ 累加一定数量的tx  ，然后压缩一次写入数据库
+
+10. tx by block  ——>
+
++ "blockhash:1"  作为sharding key， 1.2.3 ~ len(tx) 
++ 累加一定数量的tx  ，然后压缩一次写入数据库

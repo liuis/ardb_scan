@@ -44,19 +44,6 @@ Cassandra 的数据模型是基于列族（Column Family）的四维或五维模
 
 
 
-## 引用
-
-1.官方文档[http://cassandra.apache.org/doc/latest/architecture/index.html](http://cassandra.apache.org/doc/latest/architecture/index.html)
-
-2.Cassandra 安装引导 https://dzone.com/articles/install-cassandra-on-ubuntu-1804
-
-​    https://linuxize.com/post/how-to-install-apache-cassandra-on-ubuntu-18-04/
-
-3. macos install guitar：https://gist.github.com/JasperWoo/f90408544133d01ccba8d77ddfdaf75b
-4. cassandra 如何写入一个json  https://stackoverflow.com/questions/25098451/cql3-each-row-to-have-its-own-schema
-
-
-
 
 
 ## ISSUES
@@ -112,31 +99,65 @@ Cassandra 的数据模型是基于列族（Column Family）的四维或五维模
 
 ## cassandra schema 
 
+### 创建keyspace 
+
+```sql
+CREATE KEYSPACE IF NOT EXISTS conflux_scan
+WITH replication = {'class':'SimpleStrategy', 'replication_factor' : 3};
+```
+
+### 创建 table
+
+##### cassandra 会把大写的字段名变成小写，使用下划线分割
+
+#### Cassandra Collection: Set, List, Map
+
+Cassandra collections are a good way for handling tasks. Multiple elements can be stored in collections. There are limitations in Cassandra collections.
+
+- Cassandra collection cannot store data more than 64KB.
+- Keep a collection small to prevent the overhead of querying collection because entire collection needs to be traversed.
+- If you store more than 64 KB data in the collection, only 64 KB will be able to query, it will result in loss of data.
+
+在2.2之前的版本collections 会有size大小的限制，为64K，2.2版本之后可以插入2billion的items
+
+if you are using cassandra 2.2 and later you can insert 2billion items into collection. here is the link. [http://docs.datastax.com/en/cql/3.3/cql/cql_using/useCollections.html](http://docs.datastax.com/en/cql/3.3/cql/cql_using/useCollections.html)
+
+
+
 #### 1.Block Detail, for block hash query:
 
 table_name: block_detail
 
 ```sql
-CREATE TABLE 
-.block_detail 
+CREATE TABLE IF NOT EXISTS
+block_detail 
 ( id UUID  PRIMARY KEY,
-  hash text, 
- lastnamedeferredReceiptsRoot text, 
- deferredStateRoot text, 
- difficulty text, 
- epochNumber text, 
- gasLimit text,
- height  text,
- miner  text,
- nonce  text,
- parentHash  text,
- refereeHashes text,
- size text,
- timestamp text,
- transactionsRoot text,
- isPivot text
+  block_hash text,
+ detail map<text, text>,
+ newTransactionCount int
 );
- 		    
+ 	
+  
+detail => map: 
+    {
+                "deferredReceiptsRoot": "0x42c7a763c5fb8d2342b1a75b2d214f83212eca6bb9ad432502b40e73b1b2b22d",
+                "deferredStateRoot": "0x7acf7512bb021303ac4517ea0140c53ab6fd35b923ff55292a58a11dbb61f79e",
+                "difficulty": "0x77397115",
+                "epochNumber": "0x15817",
+                "gasLimit": "0xb2d05e00",
+                "hash": "0x6f5358834b127e1d0fb7e9055db64fa5fb7276804291f1554d0a5487782ef506",
+                "height": "0x15817",
+                "miner": "0x0000000000000000000000000000000000000008",
+                "nonce": "0x6ccbf7cbe080f3a4",
+                "parentHash": "0x889a47fd6433af97a9d29a29878cd6e0698ddfef16ea6e1ac736eff5e10e12ba",
+                "refereeHashes": [
+                  "0x661cd2771f13f3790ffc70eb118c7ad2ecc8de48f8f7fc07ed9b923c160f0da7"
+                ],
+                "size": "0x0",
+                "timestamp": "0x5cb81529",
+                "transactionsRoot": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347"
+                "isPivot": "0x1"
+            }
 ```
 
 #### 2.Transaction Detail, for transaction hash query:
@@ -144,28 +165,35 @@ CREATE TABLE
 table_name : tx_detail
 
 ```sql
-CREATE TABLE 
-.tx_detail 
-( id UUID,
-  hash text, 
- blockHash text, 
- contractCreated text, 
- data text, 
- from text, 
- gas text,
- gasPrice  text,
- hash  text,
- nonce  text,
- r  text,
- s text,
- v text,
- to text,
- transactionIndex text,
- timestamp text,
- value  text,
- firstBlockHash text,
- PRIMARY KEY (id, hash) #此处要有分区键(sharding key) hash 作为分区键
+CREATE TABLE IF NOT EXISTS
+tx_detail 
+( id UUID, 
+ tx_hash text,
+ detail map<text, text>,
+ PRIMARY KEY (id, tx_hash)
 );
+
+detail => map:
+{
+                "blockHash":
+                "contractCreated":
+                "data": "0x",
+                "from": "0x5510949f549c6f251bf9db1aa51674abc5b1f6db",
+                "gas": "0x989680",
+                "gasPrice": "0x2",
+                "hash": "0x19a447a350fd7f35455bf6e29ee922973eb49bea6dd76dbbd1a19fbf86ce2c0f",
+                "nonce": "0x7",
+                "r": "0xc20e60663863f397c92e009ed9232255c6a2001ddfdcdcb2405cd9c203a41703",
+                "s": "0x9d14f7437897d59104a4a06573ecaae39ad943b327631d3d1e72a80b26b1281",
+                "v": "0x0",
+                "to": null,
+                "transactionIndex": "0x0",
+                "timestamp": "0x5cb81529",
+                "value": "0x0",
+                "firstBlockHash": "0x6f5358834b127e1d0fb7e9055db64fa5fb7276804291f1554d0a5487782ef506"
+            }
+ # 表注意，from 和 to 有关键字问题，改为alias_from 和 alias_to
+ #此处要有分区键(sharding key) hash 作为分区键
 ```
 
 #### 3.Block Transactions, for block transaction query:
@@ -175,13 +203,14 @@ CREATE TABLE
 table_name：blockhash_txs
 
 ```sql
-CREATE TABLE 
-.blockhash_txs 
-( id UUID，
-  transactionHash text ,
-  blockhash set<text>，
- PRIMARY KEY (id, transactionHash) #此处要做分区键，transactionHash 作为分区键
+CREATE TABLE IF NOT EXISTS
+blockhash_txs 
+( id UUID,
+ block_hash text ,
+ transaction_hash  set<text>,
+ PRIMARY KEY (id, block_hash) 
 );
+#此处要做分区键，transactionHash 作为分区键  set<text> 无法作为分区键
 ```
 
 #### 4.Blocks Ordered by Execution, for block list query:
@@ -191,11 +220,24 @@ CREATE TABLE
 table_name : blocks_in_oreder
 
 ```sql
-CREATE TABLE 
-.blocks_in_order 
-( id UUID PRIMARY KEY,
-  blockHash set<text>
+/*create type if not exists
+blocks_score
+(
+   block_hash text,
+   score  text
 );
+*/
+CREATE TABLE IF NOT EXISTS
+blocks_in_order 
+( id UUID PRIMARY KEY,
+  block_hash set<frozen  <map<text, int>>>,
+);
+
+map => 
+{
+   "block_hash":xxxx,
+   "score": int
+}
 ```
 
 #### 5.Transactions Ordered by Execution, for Transactions list query:
@@ -205,11 +247,12 @@ CREATE TABLE
 table_name : transactions_in_oreder
 
 ```sql
-CREATE TABLE 
-.blocks_in_order 
-( id UUID PRIMARY KEY, #此处做分区键(sharding key)
-  transactionHash set<text>
+CREATE TABLE IF NOT EXISTS
+transactions_in_oreder 
+( id UUID PRIMARY KEY, 
+  transaction_hash set<text>
 );
+#此处做分区键(sharding key)
 ```
 
 #### 6.Transactions by Account:
@@ -219,14 +262,20 @@ CREATE TABLE
 table_name : transactions_by_account
 
 ```sql
-CREATE TABLE 
-.transactions_by_account 
+
+CREATE TABLE IF NOT EXISTS
+transactions_by_account 
 ( id UUID ,
   account_address text,
-  transactionHash list<text>,
-
-  PRIMARY KEY (id, account_address), #此处做分区键(sharding key)account_address
+  tx list<frozen <map<text, text>>>,
+  PRIMARY KEY (id, account_address)
 );
+tx  map =>
+ { "txHash" :xxxxx,
+  "txType":  xxxxx,
+  "timestamp": xxxxx
+  }
+, #此处做分区键(sharding key)account_address
 ```
 
 #### 7.blocks by Miners:
@@ -236,12 +285,20 @@ CREATE TABLE
 table_name : blocks_by_miner
 
 ```sql
-CREATE TABLE 
-.blocks_by_miner 
+CREATE TABLE IF NOT EXISTS
+blocks_by_miner 
 ( id UUID PRIMARY KEY,
   miner_address text,
-  blockHash set<text>
+  block_hash set<frozen  <map<text, int>>>
 );
+
+
+map => 
+{
+   "block_hash":xxxx,
+   "score": int
+}
+
 ```
 
 #### 8.Latest Block List, capped by X(1000 for now):
@@ -251,10 +308,10 @@ CREATE TABLE
 table_name : latest_block_list
 
 ```sql
-CREATE TABLE 
-.latest_block_list 
+CREATE TABLE IF NOT EXISTS
+latest_block_list 
 ( id UUID PRIMARY KEY,
-  blockHash set<text>
+  block_hash set<text>
 );
 ```
 
@@ -265,10 +322,10 @@ CREATE TABLE
 table_name : latest_blocks_sum_difficulties
 
 ```sql
-CREATE TABLE 
-.latest_blocks_sum_difficulties 
+CREATE TABLE IF NOT EXISTS
+latest_blocks_sum_difficulties 
 ( id UUID PRIMARY KEY,
-  difficulty string
+  difficulty varchar
 );
 ```
 
@@ -279,10 +336,10 @@ CREATE TABLE
 table_name : latest_blocks_sum_transactions
 
 ```sql
-CREATE TABLE 
-.latest_blocks_sum_transactions 
+CREATE TABLE IF NOT EXISTS
+latest_blocks_sum_transactions 
 ( id UUID PRIMARY KEY,
-  tps integer
+  tps int
 );
 ```
 
@@ -291,11 +348,11 @@ CREATE TABLE
 table_name: miners
 
 ```sql
-CREATE TABLE 
-.miners 
+CREATE TABLE IF NOT EXISTS
+miners 
 ( id UUID PRIMARY KEY,
   miner_address text,
-  blockHash  text
+  block_hash  list<text>
 );
 ```
 
@@ -304,10 +361,10 @@ CREATE TABLE
 table_name: pivot_chain
 
 ```sql
-CREATE TABLE 
-.pivot_chain 
+CREATE TABLE IF NOT EXISTS
+pivot_chain 
 ( id UUID PRIMARY KEY,
-  blockHash  list<text>
+  block_hash  list<text>
 );
 ```
 
@@ -316,12 +373,25 @@ CREATE TABLE
 table_name: epoch_info
 
 ```sql
-CREATE TABLE 
-.epoch_info 
+CREATE TABLE IF NOT EXISTS
+epoch_info 
 ( id UUID PRIMARY KEY,
-  epochNumber, integer,
-  blockHash  list<text>
+  epochNumber int,
+  block_hash  list<text>
 );
 ```
 
 #### 
+
+## 引用
+
+1.官方文档[http://cassandra.apache.org/doc/latest/architecture/index.html](http://cassandra.apache.org/doc/latest/architecture/index.html)
+
+2.Cassandra 安装引导 https://dzone.com/articles/install-cassandra-on-ubuntu-1804
+
+​    https://linuxize.com/post/how-to-install-apache-cassandra-on-ubuntu-18-04/
+
+3. macos install guitar：https://gist.github.com/JasperWoo/f90408544133d01ccba8d77ddfdaf75b
+4. cassandra 如何写入一个json  https://stackoverflow.com/questions/25098451/cql3-each-row-to-have-its-own-schema
+
+5.cassandra的collection limit https://stackoverflow.com/questions/40438429/what-are-the-correct-cassandra-collection-limits

@@ -129,35 +129,62 @@ if you are using cassandra 2.2 and later you can insert 2billion items into coll
 table_name: block_detail
 
 ```sql
+
 CREATE TABLE IF NOT EXISTS
 block_detail 
-( id UUID  PRIMARY KEY,
-  block_hash text,
+( block_hash text  PRIMARY KEY,
  detail map<text, text>,
- newTransactionCount int
+ refereeHashes list<text>
 );
- 	
-  
+
+insert into block_detail JSON '
+{
+  "block_hash": "12345",
+  "detail": {
+    "deferredReceiptsRoot": "0x42c7a763c5fb8d2342b1a75b2d214f83212eca6bb9ad432502b40e73b1b2b22d",
+    "deferredStateRoot": "0x7acf7512bb021303ac4517ea0140c53ab6fd35b923ff55292a58a11dbb61f79e",
+    "difficulty": "0x77397115",
+    "epochNumber": "0x15817",
+    "gasLimit": "0xb2d05e00",
+    "hash": "0x6f5358834b127e1d0fb7e9055db64fa5fb7276804291f1554d0a5487782ef506",
+    "height": "0x15817",
+    "miner": "0x0000000000000000000000000000000000000008",
+    "nonce": "0x6ccbf7cbe080f3a4",
+    "parentHash": "0x889a47fd6433af97a9d29a29878cd6e0698ddfef16ea6e1ac736eff5e10e12ba",
+    "size": "0x0",
+    "timestamp": "0x5cb81529",
+    "transactionsRoot": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+    "isPivot": "0x1",
+    "newTransactionCount": "1111"
+  },
+  "refereeHashes": [
+    "0x661cd2771f13f3790ffc70eb118c7ad2ecc8de48f8f7fc07ed9b923c160f0da7"
+  ]
+}';
+
+
+
 detail => map: 
-    {
-                "deferredReceiptsRoot": "0x42c7a763c5fb8d2342b1a75b2d214f83212eca6bb9ad432502b40e73b1b2b22d",
-                "deferredStateRoot": "0x7acf7512bb021303ac4517ea0140c53ab6fd35b923ff55292a58a11dbb61f79e",
-                "difficulty": "0x77397115",
-                "epochNumber": "0x15817",
-                "gasLimit": "0xb2d05e00",
-                "hash": "0x6f5358834b127e1d0fb7e9055db64fa5fb7276804291f1554d0a5487782ef506",
-                "height": "0x15817",
-                "miner": "0x0000000000000000000000000000000000000008",
-                "nonce": "0x6ccbf7cbe080f3a4",
-                "parentHash": "0x889a47fd6433af97a9d29a29878cd6e0698ddfef16ea6e1ac736eff5e10e12ba",
-                "refereeHashes": [
-                  "0x661cd2771f13f3790ffc70eb118c7ad2ecc8de48f8f7fc07ed9b923c160f0da7"
-                ],
-                "size": "0x0",
-                "timestamp": "0x5cb81529",
-                "transactionsRoot": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347"
-                "isPivot": "0x1"
-            }
+
+{    'deferredReceiptsRoot': '0x42c7a763c5fb8d2342b1a75b2d214f83212eca6bb9ad432502b40e73b1b2b22d',
+  'deferredStateRoot': '0x7acf7512bb021303ac4517ea0140c53ab6fd35b923ff55292a58a11dbb61f79e',
+  "difficulty": "0x77397115",
+  "epochNumber": "0x15817",
+  "gasLimit": "0xb2d05e00",
+  "hash": "0x6f5358834b127e1d0fb7e9055db64fa5fb7276804291f1554d0a5487782ef506",
+  "height": "0x15817",
+  "miner": "0x0000000000000000000000000000000000000008",
+  "nonce": "0x6ccbf7cbe080f3a4",
+  "parentHash": "0x889a47fd6433af97a9d29a29878cd6e0698ddfef16ea6e1ac736eff5e10e12ba",
+  "refereeHashes": 
+    "0x661cd2771f13f3790ffc70eb118c7ad2ecc8de48f8f7fc07ed9b923c160f0da7"
+  ,
+  "size": "0x0",
+  "timestamp": "0x5cb81529",
+  "transactionsRoot": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+  "isPivot": "0x1",
+  "newTransactionCount": "1111"
+}
 ```
 
 #### 2.Transaction Detail, for transaction hash query:
@@ -167,32 +194,55 @@ table_name : tx_detail
 ```sql
 CREATE TABLE IF NOT EXISTS
 tx_detail 
-( id UUID, 
- tx_hash text,
+( tx_hash text, 
  detail map<text, text>,
- PRIMARY KEY (id, tx_hash)
+ PRIMARY KEY (tx_hash)
 );
+insert into tx_detail JSON '
+{
+  "tx_hash": "123456",
+  "detail": {
+    "blockHash": "1234",
+    "contractCreated": "12345",
+    "data": "0x11",
+    "from": "0x5510949f549c6f251bf9db1aa51674abc5b1f6db",
+    "gas": "0x989680",
+    "gasPrice": "0x2",
+    "hash": "0x19a447a350fd7f35455bf6e29ee922973eb49bea6dd76dbbd1a19fbf86ce2c0f",
+    "nonce": "0x7",
+    "r": "0xc20e60663863f397c92e009ed9232255c6a2001ddfdcdcb2405cd9c203a41703",
+    "s": "0x9d14f7437897d59104a4a06573ecaae39ad943b327631d3d1e72a80b26b1281",
+    "v": "0x0",
+    "to": "null",
+    "transactionIndex": "0x0",
+    "timestamp": "0x5cb81529",
+    "value": "0x0",
+    "firstBlockHash": "0x6f5358834b127e1d0fb7e9055db64fa5fb7276804291f1554d0a5487782ef506"
+  }
+}';
 
 detail => map:
 {
-                "blockHash":
-                "contractCreated":
-                "data": "0x",
-                "from": "0x5510949f549c6f251bf9db1aa51674abc5b1f6db",
-                "gas": "0x989680",
-                "gasPrice": "0x2",
-                "hash": "0x19a447a350fd7f35455bf6e29ee922973eb49bea6dd76dbbd1a19fbf86ce2c0f",
-                "nonce": "0x7",
-                "r": "0xc20e60663863f397c92e009ed9232255c6a2001ddfdcdcb2405cd9c203a41703",
-                "s": "0x9d14f7437897d59104a4a06573ecaae39ad943b327631d3d1e72a80b26b1281",
-                "v": "0x0",
-                "to": null,
-                "transactionIndex": "0x0",
-                "timestamp": "0x5cb81529",
-                "value": "0x0",
-                "firstBlockHash": "0x6f5358834b127e1d0fb7e9055db64fa5fb7276804291f1554d0a5487782ef506"
-            }
- # 表注意，from 和 to 有关键字问题，改为alias_from 和 alias_to
+  "blockHash": "1234",
+  "contractCreated": "12345",
+  "data": "0x",
+  "from": "0x5510949f549c6f251bf9db1aa51674abc5b1f6db",
+  "gas": "0x989680",
+  "gasPrice": "0x2",
+  "hash": "0x19a447a350fd7f35455bf6e29ee922973eb49bea6dd76dbbd1a19fbf86ce2c0f",
+  "nonce": "0x7",
+  "r": "0xc20e60663863f397c92e009ed9232255c6a2001ddfdcdcb2405cd9c203a41703",
+  "s": "0x9d14f7437897d59104a4a06573ecaae39ad943b327631d3d1e72a80b26b1281",
+  "v": "0x0",
+  "to": null,
+  "transactionIndex": "0x0",
+  "timestamp": "0x5cb81529",
+  "value": "0x0",
+  "firstBlockHash": "0x6f5358834b127e1d0fb7e9055db64fa5fb7276804291f1554d0a5487782ef506"
+}
+
+
+ ////# 表注意，from 和 to 有关键字问题，改为alias_from 和 alias_to
  #此处要有分区键(sharding key) hash 作为分区键
 ```
 
@@ -265,11 +315,31 @@ table_name : transactions_by_account
 
 CREATE TABLE IF NOT EXISTS
 transactions_by_account 
-( id UUID ,
-  account_address text,
+( account_address text PRIMARY KEY ,
   tx list<frozen <map<text, text>>>,
-  PRIMARY KEY (id, account_address)
 );
+
+cqlsh:conflux_scan> insert into transactions_by_account JSON '{
+                ...   "account_address": "2xxx",
+                ...   "tx": [
+                ...     {
+                ...       "txHash": "1xxxxx",
+                ...       "txType": "sender",
+                ...       "timestamp": "13457899"
+                ...     },
+                ...     {
+                ...       "txHash": "13xxxxx",
+                ...       "txType": "sender",
+                ...       "timestamp": "23457899"
+                ...     }
+                ...   ]
+                ... }';
+cqlsh:conflux_scan> select * from transactions_by_account ;
+
+ account_address | tx
+-----------------+-----------------------------------------------------------------------------------------------------------------------------------------
+           14566 |                                                                                                                                    null
+            2xxx | [{'timestamp': '13457899', 'txHash': '1xxxxx', 'txType': 'sender'}, {'timestamp': '23457899', 'txHash': '13xxxxx', 'txType': 'sender'}]
 tx  map =>
  { "txHash" :xxxxx,
   "txType":  xxxxx,
@@ -278,21 +348,34 @@ tx  map =>
 , #此处做分区键(sharding key)account_address
 ```
 
-#### 7.blocks by Miners:
-
-所有的排好序的block
+#### 7.blocks by Miners
 
 table_name : blocks_by_miner
 
 ```sql
 CREATE TABLE IF NOT EXISTS
 blocks_by_miner 
-( id UUID PRIMARY KEY,
-  miner_address text,
-  block_hash set<frozen  <map<text, int>>>
+( 
+  miner_address text PRIMARY KEY,
+  block_hash list<frozen  <map<text, int>>>
 );
 
+cqlsh:conflux_scan> insert into blocks_by_miner JSON '{
+                ... "miner_address": "1234",
+                ...
+                ... "block_hash" :
+                ... [
+                ...   {"block_hash" : "03331", "score" : 1},
+                ...   {"block_hash" : "03330", "score" : 2}
+                ...
+                ... ]
+                ...
+                ... }';
+cqlsh:conflux_scan> select * from blocks_by_miner ;
 
+ miner_address | block_hash
+---------------+----------------------------------------------------------------------
+          1234 | [{'block_hash': 3331, 'score': 1}, {'block_hash': 3330, 'score': 2}]
 map => 
 {
    "block_hash":xxxx,
@@ -310,9 +393,17 @@ table_name : latest_block_list
 ```sql
 CREATE TABLE IF NOT EXISTS
 latest_block_list 
-( id UUID PRIMARY KEY,
-  block_hash set<text>
+( 
+  id varchar PRIMARY KEY,
+  block_hash list<text>,
 );
+
+cqlsh:conflux_scan> insert into latest_block_list(id , block_hash) values ('cfx', ['1xx233', '32432xxx33']);
+cqlsh:conflux_scan> select * from latest_block_list ;
+
+ id  | block_hash
+-----+--------------------------
+ cfx | ['1xx233', '32432xxx33']
 ```
 
 #### 9.Sum difficulties in latest blocks, for difficulty query:
@@ -324,9 +415,23 @@ table_name : latest_blocks_sum_difficulties
 ```sql
 CREATE TABLE IF NOT EXISTS
 latest_blocks_sum_difficulties 
-( id UUID PRIMARY KEY,
+( id varchar PRIMARY KEY,
   difficulty varchar
 );
+
+select * from latest_blocks_sum_difficulties
+                ... ;
+
+ id | difficulty
+----+------------
+
+(0 rows)
+cqlsh:conflux_scan> insert into latest_blocks_sum_difficulties(id, difficulty) values('cfx', '0');
+cqlsh:conflux_scan> select * from latest_blocks_sum_difficulties  ;
+
+ id  | difficulty
+-----+------------
+ cfx |          0
 ```
 
 #### 10.transaction in latest blocks, for TPS query::
@@ -338,9 +443,16 @@ table_name : latest_blocks_sum_transactions
 ```sql
 CREATE TABLE IF NOT EXISTS
 latest_blocks_sum_transactions 
-( id UUID PRIMARY KEY,
+( id varchar PRIMARY KEY,
   tps int
 );
+
+cqlsh:conflux_scan> insert into  latest_blocks_sum_transactions(id,tps) values('cfx', 1000);
+cqlsh:conflux_scan> select * from latest_blocks_sum_transactions ;
+
+ id  | tps
+-----+------
+ cfx | 1000
 ```
 
 #### 11.Miners 表
@@ -350,10 +462,26 @@ table_name: miners
 ```sql
 CREATE TABLE IF NOT EXISTS
 miners 
-( id UUID PRIMARY KEY,
-  miner_address text,
+( 
+  miner_address text  PRIMARY KEY,
   block_hash  list<text>
 );
+
+
+cqlsh:conflux_scan> CREATE TABLE IF NOT EXISTS
+                ... miners
+                ... (
+                ...   miner_address text  PRIMARY KEY,
+                ...   block_hash  list<text>
+                ... );
+cqlsh:conflux_scan> insert into miners(miner_address, block_hash) values ('0x3333', ['0x123', 0x456677]);
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Invalid list literal for block_hash: value 0x456677 is not of type text"
+cqlsh:conflux_scan> insert into miners(miner_address, block_hash) values ('0x3333', ['0x123', '0x456677']);
+cqlsh:conflux_scan> select * from miners ;
+
+ miner_address | block_hash
+---------------+-----------------------
+        0x3333 | ['0x123', '0x456677']
 ```
 
 #### 11.PivotChain 表
@@ -363,9 +491,24 @@ table_name: pivot_chain
 ```sql
 CREATE TABLE IF NOT EXISTS
 pivot_chain 
-( id UUID PRIMARY KEY,
+( id varchar PRIMARY KEY,
   block_hash  list<text>
 );
+
+cqlsh:conflux_scan> CREATE TABLE IF NOT EXISTS
+                ... pivot_chain
+                ... ( id varchar PRIMARY KEY,
+                ...   block_hash  list<text>
+                ... );
+cqlsh:conflux_scan> insert into pivot_chain(id, block_hash) values ('cfx', ['0x23dfsr32', '0x43tgdt4']);
+cqlsh:conflux_scan> select * from pivot_chain ;
+
+ id  | block_hash
+-----+-----------------------------
+ cfx | ['0x23dfsr32', '0x43tgdt4']
+
+(1 rows)
+cqlsh:conflux_scan>
 ```
 
 #### 12.EpochInfo 表
@@ -375,10 +518,25 @@ table_name: epoch_info
 ```sql
 CREATE TABLE IF NOT EXISTS
 epoch_info 
-( id UUID PRIMARY KEY,
-  epochNumber int,
+( epochNumber int PRIMARY KEY,
   block_hash  list<text>
 );
+```
+
+#### 13.Sync 表
+
+table_name: sync 
+
+常量表
+
+```sql
+CREATE TABLE IF NOT EXISTS
+sync_mode
+( id varchar PRIMARY KEY,
+  sync int 
+);
+
+insert into sync_mode(id, sync) values ("cfx", 1);
 ```
 
 #### 
